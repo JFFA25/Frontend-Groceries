@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-// Definir el tipo de producto
 interface Product {
   barcode: string;
   description: string;
@@ -12,37 +11,34 @@ interface Product {
   stock: number;
 }
 
-export const Table = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+interface TableProps {
+  products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+}
 
+export const Table = ({ products, setProducts }: TableProps) => {
   useEffect(() => {
     axios
       .get("http://localhost:5000/products")
       .then((response) => {
         setProducts(response.data);
-        setLoading(false);
       })
       .catch((error) => {
-        setError("Error al cargar los productos");
-        console.error(error);
-        setLoading(false);
+        console.error("Error al cargar los productos", error);
       });
-  }, []);
+  }, [setProducts]);
 
   const handleDelete = async (barcode: string) => {
     try {
       await axios.delete(`http://localhost:5000/products/${barcode}`);
-      setProducts(products.filter((product) => product.barcode !== barcode)); // Filtrar usando el barcode
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.barcode !== barcode)
+      );
       console.log("Producto eliminado");
     } catch (error) {
       console.error("Error al eliminar producto:", error);
     }
   };
-
-  if (loading) return <p>Cargando productos...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <div>

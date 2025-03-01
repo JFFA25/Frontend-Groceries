@@ -7,10 +7,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Conectar a MongoDB
-mongoose.connect("mongodb://localhost:27017/groceries")
+// Conectar a MongoDB usando la variable de entorno
+const mongoPaco = process.env.MONGO_PACO;
+mongoose.connect(mongoPaco, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Conectado a MongoDB"))
-    .catch(err => console.error(err));
+    .catch(err => console.error("Error al conectar a MongoDB:", err));
 
 // Definir esquema y modelo
 const ProductSchema = new mongoose.Schema({
@@ -49,8 +50,6 @@ app.post("/products", async (req, res) => {
     }
 });
 
-
-// Ruta para eliminar un producto por su barcode
 // Ruta para eliminar un producto por su barcode
 app.delete("/products/:barcode", async (req, res) => {
     const { barcode } = req.params; // Obtener el barcode desde la URL
@@ -65,7 +64,6 @@ app.delete("/products/:barcode", async (req, res) => {
         res.status(500).json({ error: "Error al eliminar el producto" });
     }
 });
-
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
