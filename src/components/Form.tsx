@@ -37,7 +37,7 @@ export const Form = ({ addProduct }: FormProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://192.168.1.10:5000/products", product);
+      const response = await axios.post("http://192.168.1.70:5000/products", product);
       console.log("Producto guardado:", response.data);
       addProduct(response.data);
       setProduct({
